@@ -63,3 +63,48 @@ Privacy information can be found at https://privacy.microsoft.com/en-us/
 
 Microsoft and any contributors reserve all other rights, whether under their respective copyrights, patents,
 or trademarks, whether by implication, estoppel or otherwise.
+
+---
+
+# Step by step
+
+execute test's with simple xml logger:
+```shell
+  dotnet test Tailspin.SpaceGame.Web.Tests --configuration Release --no-build --logger trx
+```
+
+dotnet tools configurations:
+```shell
+dotnet new tool-manifest ;  dotnet-reportgenerator-globaltool
+```
+
+add dotnet multiplatform test coverage:
+```shell
+dotnet add Tailspin.SpaceGame.Web.Tests package coverlet.msbuild
+```
+
+run and collect code tests coverage:
+```shell
+dotnet test --no-build \
+  --configuration Release \
+  /p:CollectCoverage=true \
+  /p:CoverletOutputFormat=cobertura \
+  /p:CoverletOutput=./TestResults/Coverage/
+```
+or:
+```shell
+MSYS2_ARG_CONV_EXCL="*" dotnet test --no-build \
+  --configuration Release \
+  /p:CollectCoverage=true \
+  /p:CoverletOutputFormat=cobertura \
+  /p:CoverletOutput=./TestResults/Coverage/
+```
+
+convert coverage file to HTML:
+
+```shell
+dotnet tool run reportgenerator \
+  -reports:./Tailspin.SpaceGame.Web.Tests/TestResults/Coverage/coverage.cobertura.xml \
+  -targetdir:./CodeCoverage \
+  -reporttypes:HtmlInline_AzurePipelines
+```
